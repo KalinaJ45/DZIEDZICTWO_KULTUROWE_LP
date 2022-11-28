@@ -1,0 +1,55 @@
+version: "3.9"
+
+services:
+   monument-api:
+      build: 
+         context: ./api 
+         dockerfile: Dockerfile.dev
+      container_name: Monument-API
+      volumes:
+         - ./api:/api
+      ports:
+         - 8000:8000
+      env_file:
+         - .env
+      command: bash -c "python manage.py runserver 0.0.0.0:8000"
+      restart: "on-failure"
+      depends_on:
+         - postgres-db
+      networks:
+         - monument-api
+
+   postgres-db:
+      image: kartoza/postgis:12.0
+      ports:
+         - 5432:5432
+      volumes:
+         - postgres_data:/var/lib/postgresql
+      environment:
+         - POSTGRES_USER=${POSTGRES_USER}
+         - POSTGRES_PASS=${POSTGRES_PASS}
+         - POSTGRES_DB=${POSTGRES_DB}
+      restart: "on-failure"
+      networks:
+         - monument-api
+
+   web:
+      build: 
+         context: ./frontend
+         dockerfile: Dockerfile.dev
+      container_name: monument_frontend
+      volumes:
+         - ./frontend:/frontend
+      ports:
+         - 3000:3000
+      depends_on:
+         - monument-api
+      networks:
+         - monument-api
+
+networks:
+   monument-api:
+      driver: bridge
+
+volumes:
+   postgres_data:
