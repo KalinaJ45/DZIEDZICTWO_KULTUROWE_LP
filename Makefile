@@ -14,13 +14,13 @@ down:
 	docker-compose down
 
 migrate:
-	docker-compose exec school-api python3 manage.py migrate --noinput
+	docker-compose exec api python3 manage.py migrate --noinput
 
 makemigrations:
-	docker-compose exec school-api python3 manage.py makemigrations
+	docker-compose exec api python3 manage.py makemigrations
 
 superuser:
-	docker-compose exec school-api python3 manage.py createsuperuser
+	docker-compose exec api python3 manage.py createsuperuser
 
 down-v:
 	docker-compose down -v
